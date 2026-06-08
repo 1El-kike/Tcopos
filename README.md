@@ -1,73 +1,98 @@
-# React + TypeScript + Vite
+# TCOPOS — Gestión Financiera
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web para el registro y control de operaciones financieras personales.  
+Inspirada en un monedero electrónico: múltiples cuentas, control de ingresos/egresos, y resumen por rango de fechas.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Autenticación simulada** — Login con credenciales de prueba.
+- **Dashboard** — Resumen general con todas las cuentas y sus saldos.
+- **Cuentas** — Listado completo de cuentas bancarias (gastos generales, compras, inversiones, etc.).
+- **Detalle de cuenta** — Formulario con validaciones para crear transacciones, resumen de ingresos/egresos, filtro por rango de fechas, y listado de movimientos.
+- **Multimoneda** — Soporte para distintas divisas por cuenta.
+- **Responsive** — Diseño adaptativo mobile-first con modo oscuro y glassmorphism.
+- **Animaciones** — Transiciones suaves con Motion.
 
-## React Compiler
+## Tecnologías
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Capa | Tecnología |
+|------|-----------|
+| Framework | React 19 + TypeScript 6 |
+| Build | Vite 8 / Rolldown |
+| Estilos | Tailwind CSS v4 + HeroUI v3 |
+| Estado | Zustand (auth) + React Query (datos) |
+| Formularios | react-hook-form |
+| Notificaciones | react-hot-toast |
+| Animaciones | Motion |
+| Fondo 3D | Three.js / @react-three/fiber |
+| API | Axios + MockAPI |
 
-## Expanding the ESLint configuration
+## Requisitos
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js >= 20
+- npm >= 10
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Instalación y uso
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# Clonar el repositorio
+git clone <url-del-repo>
+cd TCOPOS
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Instalar dependencias
+npm install
+
+# Iniciar en modo desarrollo
+npm run dev
+
+# Compilar para producción
+npm run build
+
+# Previsualizar la build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Variables de entorno
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Crear un archivo `.env` en la raíz del proyecto:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_API_URL=https://6a278e87a84f9d39e908b63c.mockapi.io/api
 ```
+
+## Credenciales de prueba
+
+| Campo | Valor |
+|-------|-------|
+| Correo | `test@test.com` |
+| Contraseña | cualquier valor |
+
+## API Externa
+
+Los datos se obtienen de [MockAPI](https://mockapi.io/). Endpoints:
+
+- `GET /accounts` — Lista de cuentas
+- `GET /accounts/:id` — Cuenta individual
+- `GET /transactions` — Todas las transacciones
+- `POST /transactions` — Crear transacción
+
+## Estructura del proyecto
+
+```
+src/
+├── components/
+│   ├── atoms/           # Componentes base (Iconos, Logo, Avatar, etc.)
+│   ├── molecules/       # Combinaciones simples (SidebarNav, UserMenu, DateRangeFilter)
+│   ├── organisms/       # Componentes complejos (AccountGrid, TransactionSummary, TransactionList, AppHeader, AppSidebar)
+│   └── templates/       # Layouts completos (AppLayout)
+├── hooks/               # Custom hooks (useLoginForm, useAccounts, useTransactions)
+├── pages/               # Páginas (Login, Dashboard, Accounts, AccountDetail)
+├── router/              # Configuración de rutas
+├── services/            # API client (axios) y tipos
+├── store/               # Estado global (Zustand)
+└── utils/               # Utilidades
+```
+
+## Despliegue
+
+[_Pendiente — agregar URL después del deploy_]

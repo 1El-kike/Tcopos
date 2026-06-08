@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../services/api'
-import type { Transaction, CreateTransactionPayload } from '../services/types'
+import type { Transaction, CreateTransactionPayload, UpdateTransactionPayload } from '../services/types'
 
 export const transactionKeys = {
   all: ['transactions'] as const,
@@ -35,6 +35,21 @@ export function useCreateTransaction() {
   return useMutation({
     mutationFn: async (payload: CreateTransactionPayload) => {
       const { data } = await api.post<Transaction>('/transactions', payload)
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: transactionKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+    },
+  })
+}
+
+export function useUpdateTransaction() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, ...payload }: UpdateTransactionPayload & { id: string }) => {
+      const { data } = await api.put<Transaction>(`/transactions/${id}`, payload)
       return data
     },
     onSuccess: () => {

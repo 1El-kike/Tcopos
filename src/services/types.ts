@@ -34,3 +34,5 @@ export interface CreateTransactionPayload {
   category: string
   date?: number
 }
+
+export type UpdateTransactionPayload = Partial<Omit<CreateTransactionPayload, 'accountId'>>

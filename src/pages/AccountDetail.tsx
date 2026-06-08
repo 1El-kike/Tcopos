@@ -1,10 +1,16 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { motion } from 'motion/react'
 import { Button, Input, Card, CardContent, TextField, Label, FieldError } from '@heroui/react'
 import toast from 'react-hot-toast'
 import { useAccount } from '../hooks/useAccounts'
-import { useTransactions, useCreateTransaction } from '../hooks/useTransactions'
+import { useTransactions, useCreateTransaction, useUpdateTransaction } from '../hooks/useTransactions'
+import DateRangeFilter from '../components/molecules/DateRangeFilter'
+import TransactionSummary from '../components/organisms/TransactionSummary'
+import TransactionList from '../components/organisms/TransactionList'
+import CategoryChart from '../components/organisms/CategoryChart'
+import type { Transaction } from '../services/types'
 
 const TX_TYPES = [
   { value: 'deposit', label: 'Depósito' },
@@ -43,35 +49,88 @@ function SkeletonBlock({ className = '' }: { className?: string }) {
   return <div className={`bg-white/5 rounded-xl animate-pulse ${className}`} />
 }
 
+function toTimestamp(dateStr: string): number {
+  return new Date(dateStr).getTime()
+}
+
 export default function AccountDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data: account, isLoading: accountLoading } = useAccount(id!)
   const { data: transactions, isLoading: txLoading } = useTransactions()
+  const [dateRange, setDateRange] = useState<{ from: string; to: string }>({ from: '', to: '' })
+  const [editingTx, setEditingTx] = useState<Transaction | null>(null)
   const createTx = useCreateTransaction()
+  const updateTx = useUpdateTransaction()
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<TransactionForm>()
 
-  const filteredTxs = transactions?.filter((tx) => tx.accountId === id) ?? []
+  useEffect(() => {
+    if (editingTx) {
+      setValue('type', editingTx.type)
+      setValue('amount', editingTx.amount)
+      setValue('description', editingTx.description)
+      setValue('category', editingTx.category)
+    }
+  }, [editingTx, setValue])
+
+  const handleEdit = (tx: Transaction) => {
+    setEditingTx(tx)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const cancelEdit = () => {
+    setEditingTx(null)
+    reset()
+  }
+
+  const accountTxs = transactions?.filter((tx) => tx.accountId === id) ?? []
+
+  const filteredTxs = accountTxs.filter((tx) => {
+    if (dateRange.from && tx.date < toTimestamp(dateRange.from)) return false
+    if (dateRange.to && tx.date > toTimestamp(dateRange.to + 'T23:59:59')) return false
+    return true
+  })
+
+  const periodIncome = filteredTxs
+    .filter((tx) => tx.type === 'deposit')
+    .reduce((sum, tx) => sum + Number(tx.amount), 0)
+
+  const periodExpenses = filteredTxs
+    .filter((tx) => tx.type !== 'deposit')
+    .reduce((sum, tx) => sum + Number(tx.amount), 0)
 
   const onSubmit = async (values: TransactionForm) => {
     try {
-      await createTx.mutateAsync({
-        accountId: id!,
-        type: values.type,
-        amount: values.amount,
-        description: values.description,
-        category: values.category,
-      })
-      toast.success('Transacción creada correctamente')
+      if (editingTx) {
+        await updateTx.mutateAsync({
+          id: editingTx.id,
+          type: values.type,
+          amount: values.amount,
+          description: values.description,
+          category: values.category,
+        })
+        toast.success('Transacción actualizada correctamente')
+        setEditingTx(null)
+      } else {
+        await createTx.mutateAsync({
+          accountId: id!,
+          type: values.type,
+          amount: values.amount,
+          description: values.description,
+          category: values.category,
+        })
+        toast.success('Transacción creada correctamente')
+      }
       reset()
     } catch {
-      toast.error('Error al crear la transacción')
+      toast.error(editingTx ? 'Error al actualizar la transacción' : 'Error al crear la transacción')
     }
   }
 
@@ -127,15 +186,35 @@ export default function AccountDetail() {
       </motion.header>
 
       <motion.div variants={itemVariants}>
+        <TransactionSummary
+          currentBalance={Number(account.balance)}
+          periodIncome={periodIncome}
+          periodExpenses={periodExpenses}
+          currency={account.currency}
+        />
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
         <Card className="bg-white/5 border border-white/10 backdrop-blur-xl">
           <CardContent className="p-5 sm:p-6 space-y-6">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              Nueva transacción
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                {editingTx ? 'Editar transacción' : 'Nueva transacción'}
+              </h2>
+              {editingTx && (
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  className="text-xs text-slate-400 hover:text-white border border-white/10 hover:border-white/30 rounded-lg px-3 py-1.5 transition-all cursor-pointer"
+                >
+                  Cancelar
+                </button>
+              )}
+            </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <label className="flex flex-col gap-1.5">
@@ -214,7 +293,9 @@ export default function AccountDetail() {
                 isDisabled={isSubmitting}
                 size="lg"
               >
-                {isSubmitting ? 'Creando...' : 'Crear transacción'}
+                {isSubmitting
+                  ? editingTx ? 'Actualizando...' : 'Creando...'
+                  : editingTx ? 'Actualizar transacción' : 'Crear transacción'}
               </Button>
             </form>
           </CardContent>
@@ -224,72 +305,45 @@ export default function AccountDetail() {
       <motion.div variants={itemVariants}>
         <Card className="bg-white/5 border border-white/10 backdrop-blur-xl">
           <CardContent className="p-5 sm:p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <line x1="3" y1="9" x2="21" y2="9" />
-                <line x1="9" y1="21" x2="9" y2="9" />
-              </svg>
-              Movimientos ({filteredTxs.length})
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <line x1="3" y1="9" x2="21" y2="9" />
+                  <line x1="9" y1="21" x2="9" y2="9" />
+                </svg>
+                Movimientos ({filteredTxs.length})
+              </h2>
+              <DateRangeFilter
+                from={dateRange.from}
+                to={dateRange.to}
+                onChange={setDateRange}
+                onReset={() => setDateRange({ from: '', to: '' })}
+              />
+            </div>
 
-            {txLoading ? (
-              <div className="space-y-2">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <SkeletonBlock key={i} className="h-16" />
-                ))}
-              </div>
-            ) : filteredTxs.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-slate-400">No hay transacciones registradas.</p>
-                <p className="text-slate-500 text-sm mt-1">
-                  Crea la primera usando el formulario de arriba.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
-                {filteredTxs.map((tx) => (
-                  <motion.div
-                    key={tx.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center justify-between bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-colors"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="text-white font-medium truncate">
-                        {tx.description}
-                      </p>
-                      <p className="text-slate-400 text-sm capitalize">
-                        {tx.category} &middot; {tx.type}
-                      </p>
-                    </div>
-                    <div className="text-right ml-4 flex-shrink-0">
-                      <p className="text-white font-semibold tabular-nums">
-                        {new Intl.NumberFormat('es-DO', {
-                          style: 'currency',
-                          currency: account.currency,
-                        }).format(Number(tx.amount))}
-                      </p>
-                      <span
-                        className={`text-xs font-medium capitalize ${
-                          tx.type === 'deposit'
-                            ? 'text-green-400'
-                            : tx.type === 'withdrawal'
-                              ? 'text-red-400'
-                              : 'text-slate-400'
-                        }`}
-                      >
-                        {tx.type === 'deposit'
-                          ? 'Ingreso'
-                          : tx.type === 'withdrawal'
-                            ? 'Retiro'
-                            : tx.type}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
+            <TransactionList
+              transactions={filteredTxs}
+              isLoading={txLoading}
+              currency={account.currency}
+              onEdit={handleEdit}
+            />
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <Card className="bg-white/5 border border-white/10 backdrop-blur-xl">
+          <CardContent className="p-5 sm:p-6">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 20V10" />
+                <path d="M18 20V4" />
+                <path d="M6 20v-6" />
+              </svg>
+              Ingresos / Egresos por categoría
+            </h2>
+            <CategoryChart transactions={filteredTxs} currency={account.currency} />
           </CardContent>
         </Card>
       </motion.div>
