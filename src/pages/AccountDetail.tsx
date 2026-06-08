@@ -61,8 +61,8 @@ function ChartIcon() {
 export default function AccountDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { data: account, isLoading: accountLoading } = useAccount(id!)
-  const { data: transactions, isLoading: txLoading } = useTransactions()
+  const { data: account, isLoading: accountLoading, isError: accountError } = useAccount(id!)
+  const { data: transactions, isLoading: txLoading, isError: txError } = useTransactions()
   const [dateRange, setDateRange] = useState<{ from: string; to: string }>({ from: '', to: '' })
   const [editingTx, setEditingTx] = useState<Transaction | null>(null)
   const createTx = useCreateTransaction()
@@ -134,6 +134,22 @@ export default function AccountDetail() {
     )
   }
 
+  if (accountError) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center space-y-4">
+        <svg className="mx-auto mb-3 text-red-400" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <p className="text-slate-500 text-lg font-heading tracking-wide">Error al cargar la cuenta. Intenta de nuevo.</p>
+        <Button variant="secondary" onPress={() => navigate('/dashboard')} className="font-heading tracking-wide">
+          Volver al dashboard
+        </Button>
+      </div>
+    )
+  }
+
   if (!account) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center space-y-4">
@@ -184,6 +200,7 @@ export default function AccountDetail() {
           periodIncome={periodIncome}
           periodExpenses={periodExpenses}
           currency={account.currency}
+          isLoading={txLoading}
         />
       </motion.div>
 
@@ -229,12 +246,23 @@ export default function AccountDetail() {
               />
             </SectionHeader>
 
-            <TransactionList
-              transactions={filteredTxs}
-              isLoading={txLoading}
-              currency={account.currency}
-              onEdit={handleEdit}
-            />
+            {txError ? (
+              <div className="text-center py-12">
+                <svg className="mx-auto mb-3 text-red-400" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <p className="text-slate-500 font-heading tracking-wide">Error al cargar las transacciones.</p>
+              </div>
+            ) : (
+              <TransactionList
+                transactions={filteredTxs}
+                isLoading={txLoading}
+                currency={account.currency}
+                onEdit={handleEdit}
+              />
+            )}
           </CardContent>
         </Card>
       </motion.div>

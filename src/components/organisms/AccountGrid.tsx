@@ -72,6 +72,11 @@ export default function AccountGrid({ accounts, isLoading }: AccountGridProps) {
         animate={{ opacity: 1, y: 0 }}
         className="text-center py-20"
       >
+        <svg className="mx-auto mb-4 text-slate-600" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="9" y1="21" x2="9" y2="9" />
+        </svg>
         <p className="text-slate-500 text-lg font-heading tracking-wide">No hay cuentas disponibles</p>
       </motion.div>
     )

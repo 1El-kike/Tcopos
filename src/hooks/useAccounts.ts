@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import api from '../services/api'
 import type { Account, CreateAccountPayload } from '../services/types'
 
@@ -38,6 +39,9 @@ export function useCreateAccount() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: accountKeys.all })
     },
+    onError: () => {
+      toast.error('Error al crear la cuenta')
+    },
   })
 }
 
@@ -50,6 +54,9 @@ export function useDeleteAccount() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: accountKeys.all })
+    },
+    onError: () => {
+      toast.error('Error al eliminar la cuenta')
     },
   })
 }

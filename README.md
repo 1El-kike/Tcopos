@@ -36,7 +36,7 @@ Inspirada en un monedero electrónico: múltiples cuentas, control de ingresos/e
 
 ```bash
 # Clonar el repositorio
-git clone <url-del-repo>
+git clone https://github.com/1El-kike/Tcopos.git
 cd TCOPOS
 
 # Instalar dependencias
@@ -95,4 +95,11 @@ src/
 
 ## Despliegue
 
-[_Pendiente — agregar URL después del deploy_]
+Disponible en **[Render](https://tcopos.onrender.com/dashboard)** (Static Site).
+
+```bash
+# Build de producción
+npm run build
+```
+
+El directorio `dist/` se despliega en Render apuntando al build de Vite.

@@ -5,6 +5,7 @@ interface TransactionSummaryProps {
   periodIncome: number
   periodExpenses: number
   currency: string
+  isLoading?: boolean
 }
 
 export default function TransactionSummary({
@@ -12,7 +13,20 @@ export default function TransactionSummary({
   periodIncome,
   periodExpenses,
   currency,
+  isLoading,
 }: TransactionSummaryProps) {
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 animate-pulse">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="bg-navy-700/40 rounded-xl border border-navy-600/30 p-4 space-y-3">
+            <div className="h-3 bg-navy-500/20 rounded w-20" />
+            <div className="h-6 bg-navy-500/20 rounded w-28" />
+          </div>
+        ))}
+      </div>
+    )
+  }
   const periodNet = periodIncome - periodExpenses
   const fmt = (n: number) =>
     new Intl.NumberFormat('es-DO', { style: 'currency', currency }).format(n)

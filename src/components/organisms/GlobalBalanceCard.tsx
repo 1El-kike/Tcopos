@@ -4,9 +4,25 @@ import heroWebp from '../../assets/images/cheatah.png'
 
 interface GlobalBalanceCardProps {
   accounts: Account[]
+  isLoading?: boolean
 }
 
-export default function GlobalBalanceCard({ accounts }: GlobalBalanceCardProps) {
+export default function GlobalBalanceCard({ accounts, isLoading }: GlobalBalanceCardProps) {
+  if (isLoading) {
+    return (
+      <div className="relative rounded-2xl border border-navy-500/20 p-6 sm:p-8 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-navy-800/90 via-navy-700/80 to-navy-800/95" />
+        <div className="relative space-y-4 animate-pulse">
+          <div className="h-4 bg-navy-500/20 rounded w-28" />
+          <div className="h-9 bg-navy-500/20 rounded w-56" />
+          <div className="flex gap-6 pt-1">
+            <div className="h-4 bg-navy-500/20 rounded w-24" />
+            <div className="h-4 bg-navy-500/20 rounded w-28" />
+          </div>
+        </div>
+      </div>
+    )
+  }
   const totalBalance = accounts.reduce((sum, a) => sum + Number(a.balance), 0)
   const currencies = [...new Set(accounts.map((a) => a.currency))]
   const multiCurrency = currencies.length > 1

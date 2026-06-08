@@ -9,8 +9,8 @@ import RecentTransactions from '../components/organisms/RecentTransactions'
 import CategoryChart from '../components/organisms/CategoryChart'
 
 export default function Dashboard() {
-  const { data: accounts, isLoading: accountsLoading } = useAccounts()
-  const { data: transactions, isLoading: txLoading } = useTransactions()
+  const { data: accounts, isLoading: accountsLoading, isError: accountsError } = useAccounts()
+  const { data: transactions, isLoading: txLoading, isError: txError } = useTransactions()
 
   const chartCurrency = useMemo(() => {
     if (!accounts || accounts.length === 0) return 'USD'
@@ -36,7 +36,18 @@ export default function Dashboard() {
       </motion.header>
 
       {accounts && accounts.length > 0 && (
-        <GlobalBalanceCard accounts={accounts} />
+        <GlobalBalanceCard accounts={accounts} isLoading={accountsLoading} />
+      )}
+
+      {accountsError && (
+        <div className="text-center py-12 bg-navy-700/20 rounded-2xl border border-navy-600/20">
+          <svg className="mx-auto mb-3 text-red-400" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p className="text-slate-500 font-heading tracking-wide">Error al cargar las cuentas. Intenta de nuevo.</p>
+        </div>
       )}
 
       <section className="space-y-4">
@@ -48,11 +59,22 @@ export default function Dashboard() {
           </svg>
           Últimos movimientos
         </h2>
-        <RecentTransactions
-          transactions={transactions ?? []}
-          accounts={accounts ?? []}
-          isLoading={txLoading}
-        />
+        {txError ? (
+          <div className="text-center py-12 bg-navy-700/20 rounded-2xl border border-navy-600/20">
+            <svg className="mx-auto mb-3 text-red-400" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <p className="text-slate-500 font-heading tracking-wide">Error al cargar las transacciones. Intenta de nuevo.</p>
+          </div>
+        ) : (
+          <RecentTransactions
+            transactions={transactions ?? []}
+            accounts={accounts ?? []}
+            isLoading={txLoading}
+          />
+        )}
       </section>
 
       <section className="space-y-4">
