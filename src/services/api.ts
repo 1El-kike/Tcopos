@@ -1,4 +1,5 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
+import { useAuthStore } from '../store/authStore'
 
 export interface ApiError {
   message: string
@@ -6,19 +7,9 @@ export interface ApiError {
   errors?: Record<string, string[]>
 }
 
-const STORAGE_KEY = 'auth_token'
-
-function getToken(): string | null {
-  try {
-    return localStorage.getItem(STORAGE_KEY)
-  } catch {
-    return null
-  }
-}
-
 function handleSessionExpired(): void {
-  localStorage.removeItem(STORAGE_KEY)
-  window.location.href = '/login'
+  useAuthStore.getState().logout()
+  window.location.href = '/'
 }
 
 const api = axios.create({
@@ -32,7 +23,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = getToken()
+    const token = useAuthStore.getState().token
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -83,9 +74,9 @@ api.interceptors.response.use(
 
 export function setToken(token: string | null): void {
   if (token) {
-    localStorage.setItem(STORAGE_KEY, token)
+    useAuthStore.getState().login(token)
   } else {
-    localStorage.removeItem(STORAGE_KEY)
+    useAuthStore.getState().logout()
   }
 }
 
