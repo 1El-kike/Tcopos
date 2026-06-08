@@ -24,23 +24,23 @@ export default function TransactionSummary({
       transition={{ duration: 0.4 }}
       className="grid grid-cols-2 sm:grid-cols-4 gap-3"
     >
-      <div className="bg-white/5 rounded-xl border border-white/10 p-4">
-        <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Saldo actual</p>
-        <p className="text-xl font-bold text-white mt-1 tabular-nums">{fmt(currentBalance)}</p>
+      <div className="bg-navy-700/40 rounded-xl border border-navy-600/30 p-4 space-y-1">
+        <p className="text-xs text-slate-500 font-heading font-medium uppercase tracking-[0.12em]">Saldo actual</p>
+        <p className="text-xl font-heading font-bold text-slate-100 tabular-nums tracking-wide">{fmt(currentBalance)}</p>
       </div>
-      <div className="bg-white/5 rounded-xl border border-green-500/20 p-4">
-        <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Ingresos</p>
-        <p className="text-xl font-bold text-green-400 mt-1 tabular-nums">{fmt(periodIncome)}</p>
+      <div className="bg-navy-700/40 rounded-xl border border-navy-500/20 p-4 space-y-1">
+        <p className="text-xs text-slate-500 font-heading font-medium uppercase tracking-[0.12em]">Ingresos</p>
+        <p className="text-xl font-heading font-bold text-blue-light tabular-nums tracking-wide">{fmt(periodIncome)}</p>
       </div>
-      <div className="bg-white/5 rounded-xl border border-red-500/20 p-4">
-        <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Egresos</p>
-        <p className="text-xl font-bold text-red-400 mt-1 tabular-nums">{fmt(periodExpenses)}</p>
+      <div className="bg-navy-700/40 rounded-xl border border-navy-600/30 p-4 space-y-1">
+        <p className="text-xs text-slate-500 font-heading font-medium uppercase tracking-[0.12em]">Egresos</p>
+        <p className="text-xl font-heading font-bold text-slate-400 tabular-nums tracking-wide">{fmt(periodExpenses)}</p>
       </div>
-      <div className="bg-white/5 rounded-xl border border-white/10 p-4">
-        <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Neto del período</p>
+      <div className="bg-navy-700/40 rounded-xl border border-navy-600/30 p-4 space-y-1">
+        <p className="text-xs text-slate-500 font-heading font-medium uppercase tracking-[0.12em]">Neto del período</p>
         <p
-          className={`text-xl font-bold mt-1 tabular-nums ${
-            periodNet >= 0 ? 'text-green-400' : 'text-red-400'
+          className={`text-xl font-heading font-bold tabular-nums tracking-wide ${
+            periodNet >= 0 ? 'text-blue-light' : 'text-slate-400'
           }`}
         >
           {fmt(periodNet)}

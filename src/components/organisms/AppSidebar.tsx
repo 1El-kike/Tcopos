@@ -25,10 +25,10 @@ export default function AppSidebar({ isOpen, onClose }: AppSidebarProps) {
   const sidebarContent = (
     <aside
       ref={sidebarRef}
-      className="h-full flex flex-col bg-slate-900/95 backdrop-blur-xl border-r border-white/10"
+      className="h-full flex flex-col bg-navy-800/95 backdrop-blur-xl border-r border-navy-600/30"
       aria-label="Menú lateral"
     >
-      <div className="flex items-center justify-between h-16 px-4 border-b border-white/5">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-navy-600/20">
         <Logo />
         <div className="lg:hidden">
           <SidebarToggle isOpen onToggle={onClose} />
@@ -39,8 +39,8 @@ export default function AppSidebar({ isOpen, onClose }: AppSidebarProps) {
         <SidebarNav onNavigate={onClose} />
       </div>
 
-      <div className="p-4 border-t border-white/5">
-        <p className="text-xs text-slate-500 text-center">TCOPOS v1.0</p>
+      <div className="p-4 border-t border-navy-600/20">
+        <p className="text-xs text-slate-600 text-center tracking-wide">TCOPOS v1.0</p>
       </div>
     </aside>
   )
@@ -62,7 +62,7 @@ export default function AppSidebar({ isOpen, onClose }: AppSidebarProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-30 bg-navy-900/70 backdrop-blur-sm lg:hidden"
             onClick={onClose}
             aria-hidden="true"
           />
@@ -71,7 +71,7 @@ export default function AppSidebar({ isOpen, onClose }: AppSidebarProps) {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed top-0 left-0 z-40 h-full w-64 shadow-2xl"
+            className="fixed top-0 left-0 z-40 h-full w-64 shadow-2xl shadow-navy-900/50"
           >
             {sidebarContent}
           </motion.div>

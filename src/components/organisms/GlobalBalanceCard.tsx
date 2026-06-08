@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import type { Account } from '../../services/types'
+import heroWebp from '../../assets/images/cheatah.png'
 
 interface GlobalBalanceCardProps {
   accounts: Account[]
@@ -15,31 +16,43 @@ export default function GlobalBalanceCard({ accounts }: GlobalBalanceCardProps) 
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-gradient-to-br from-blue-600/20 via-blue-500/10 to-violet-600/20 rounded-2xl border border-blue-500/20 p-6 sm:p-8"
+      className="relative rounded-2xl border border-navy-500/20 p-6 sm:p-8 overflow-hidden"
     >
-      <p className="text-sm text-slate-400 font-medium uppercase tracking-wide">
-        Balance global
-      </p>
-      <p className="text-3xl sm:text-4xl font-bold text-white mt-2 tabular-nums tracking-tight">
-        {multiCurrency ? (
-          <span className="text-lg sm:text-xl text-slate-300">
-            {accounts.length} cuentas &middot; {currencies.length} divisas
-          </span>
-        ) : (
-          new Intl.NumberFormat('es-DO', {
-            style: 'currency',
-            currency: currencies[0],
-          }).format(totalBalance)
-        )}
-      </p>
-      <div className="flex flex-wrap gap-6 mt-4 text-sm">
+      <div className="absolute inset-0 bg-gradient-to-br from-navy-800/90 via-navy-700/80 to-navy-800/95" />
+      <img
+        src={heroWebp}
+        alt=""
+         
+        className="absolute right-0 top-1/2 -translate-y-1/2 h-full w-auto object-contain pointer-events-none"
+      />
+      <div className="absolute top-0 right-0 w-72 md:w-96 h-72 bg-navy-500/10 blur-[100px] rounded-full" />
+      <div className="relative space-y-4">
         <div>
-          <span className="text-slate-400">Cuentas: </span>
-          <span className="text-white font-semibold">{accounts.length}</span>
+          <p className="text-xs text-gold-400 font-heading font-medium uppercase tracking-[0.15em]">
+            Balance global
+          </p>
+          <p className="text-3xl sm:text-4xl font-heading font-bold text-slate-100 mt-2 tabular-nums tracking-wide">
+            {multiCurrency ? (
+              <span className="text-lg sm:text-xl text-slate-300">
+                {accounts.length} cuentas &middot; {currencies.length} divisas
+              </span>
+            ) : (
+              new Intl.NumberFormat('es-DO', {
+                style: 'currency',
+                currency: currencies[0],
+              }).format(totalBalance)
+            )}
+          </p>
         </div>
-        <div>
-          <span className="text-slate-400">Divisas: </span>
-          <span className="text-white font-semibold">{currencies.join(', ')}</span>
+        <div className="flex flex-wrap gap-6 pt-1">
+          <div>
+            <span className="text-slate-500 text-sm">Cuentas: </span>
+            <span className="text-slate-200 font-semibold text-sm">{accounts.length}</span>
+          </div>
+          <div>
+            <span className="text-slate-500 text-sm">Divisas: </span>
+            <span className="text-slate-200 font-semibold text-sm">{currencies.join(', ')}</span>
+          </div>
         </div>
       </div>
     </motion.div>

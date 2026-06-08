@@ -11,11 +11,11 @@ import type { Transaction } from '../../services/types'
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 const INCOME_COLORS = [
-  '#22c55e', '#16a34a', '#4ade80', '#86efac', '#bbf7d0',
+  '#3b82f6', '#2563eb', '#60a5fa', '#93bbfd', '#1d4ed8',
 ]
 
 const EXPENSE_COLORS = [
-  '#ef4444', '#dc2626', '#f87171', '#fca5a5', '#fecaca',
+  '#1e3a8a', '#162a50', '#0f1a3e', '#334155', '#475569',
 ]
 
 interface CategoryChartProps {
@@ -47,7 +47,7 @@ export default function CategoryChart({ transactions, currency }: CategoryChartP
   if (!hasData) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-400">No hay datos para mostrar en el gráfico.</p>
+        <p className="text-slate-500 font-heading tracking-wide">No hay datos para mostrar en el gráfico.</p>
       </div>
     )
   }
@@ -65,7 +65,7 @@ export default function CategoryChart({ transactions, currency }: CategoryChartP
           color: '#94a3b8',
           padding: 16,
           usePointStyle: true,
-          font: { size: 11 },
+          font: { size: 11, family: 'Outfit, sans-serif' },
         },
       },
       tooltip: {
@@ -81,7 +81,7 @@ export default function CategoryChart({ transactions, currency }: CategoryChartP
     <div className="grid sm:grid-cols-2 gap-6">
       {incomeCategories.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-green-400 mb-3 text-center">
+          <h3 className="text-sm font-heading font-semibold text-blue-light mb-3 text-center tracking-wide">
             Ingresos por categoría
           </h3>
           <div className="h-56">
@@ -92,7 +92,8 @@ export default function CategoryChart({ transactions, currency }: CategoryChartP
                   {
                     data: Object.values(incomeByCategory),
                     backgroundColor: INCOME_COLORS.slice(0, incomeCategories.length),
-                    borderWidth: 0,
+                    borderWidth: 1,
+                    borderColor: '#1e3a8a',
                   },
                 ],
               }}
@@ -104,7 +105,7 @@ export default function CategoryChart({ transactions, currency }: CategoryChartP
 
       {expenseCategories.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-red-400 mb-3 text-center">
+          <h3 className="text-sm font-heading font-semibold text-slate-400 mb-3 text-center tracking-wide">
             Egresos por categoría
           </h3>
           <div className="h-56">
@@ -115,7 +116,8 @@ export default function CategoryChart({ transactions, currency }: CategoryChartP
                   {
                     data: Object.values(expenseByCategory),
                     backgroundColor: EXPENSE_COLORS.slice(0, expenseCategories.length),
-                    borderWidth: 0,
+                    borderWidth: 1,
+                    borderColor: '#0a1628',
                   },
                 ],
               }}

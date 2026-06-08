@@ -20,15 +20,15 @@ export default function UserMenu() {
       <div className="hidden sm:flex items-center gap-2">
         <UserAvatar name="Usuario TCOPOS" />
         <div className="text-left">
-          <p className="text-sm font-medium text-white leading-tight">Usuario</p>
-          <p className="text-xs text-slate-400">test@test.com</p>
+          <p className="text-sm font-heading font-medium text-slate-200 leading-tight tracking-wide">Usuario</p>
+          <p className="text-xs text-slate-500 tracking-wide">test@test.com</p>
         </div>
       </div>
       <Button
         isIconOnly
         variant="ghost"
         onPress={handleLogout}
-        className="text-slate-400 hover:text-red-400 transition-colors"
+        className="text-slate-500 hover:text-blue-light transition-colors"
         aria-label="Cerrar sesión"
       >
         <LogOutIcon />

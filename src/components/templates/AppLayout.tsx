@@ -5,6 +5,7 @@ import AppHeader from '../organisms/AppHeader'
 import AppSidebar from '../organisms/AppSidebar'
 import AppFooter from '../organisms/AppFooter'
 import ThreeBackground from '../atoms/ThreeBackground'
+import BackgroundEffects from '../atoms/BackgroundEffects'
 
 export default function AppLayout() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -18,13 +19,14 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-navy-900">
+      <BackgroundEffects />
       <ThreeBackground />
       <AppHeader sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
       <AppSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-      <main className="flex-1 pt-16 lg:pl-64">
-        <div className="min-h-[calc(100vh-4rem-3rem)] bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90">
+      <main className="flex-1 z-10 pt-16 lg:pl-64">
+        <div className="min-h-[calc(100vh-4rem-3rem)]">
           <Outlet />
         </div>
       </main>

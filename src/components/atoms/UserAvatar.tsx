@@ -18,7 +18,7 @@ export default function UserAvatar({ name, size = 'sm' }: UserAvatarProps) {
 
   return (
     <div
-      className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-semibold flex-shrink-0`}
+      className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-blue-accent to-navy-500 flex items-center justify-center text-white font-heading font-bold flex-shrink-0 tracking-wide`}
       aria-label={name}
     >
       {initials || 'U'}

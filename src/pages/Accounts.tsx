@@ -11,9 +11,10 @@ export default function Accounts() {
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        className="space-y-1"
       >
-        <h1 className="text-2xl sm:text-3xl font-bold text-white">Cuentas</h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <h1 className="text-2xl sm:text-3xl font-heading font-bold text-gold-400 tracking-wide">Cuentas</h1>
+        <p className="text-slate-500 text-sm mt-1 font-heading tracking-wide">
           {accounts?.length ?? 0} cuentas registradas
         </p>
       </motion.header>

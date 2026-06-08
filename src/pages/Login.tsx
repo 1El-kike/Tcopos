@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Card, CardContent, Button, Input, TextField, Label, FieldError } from '@heroui/react'
 import { useLoginForm } from '../hooks/useLoginForm'
 import ThreeBackground from '../components/atoms/ThreeBackground'
+import BackgroundEffects from '../components/atoms/BackgroundEffects'
 
 function AlertCircle() {
   return (
@@ -38,20 +39,21 @@ export default function Login() {
   const { register, handleSubmit, errors, isSubmitting } = useLoginForm()
 
   return (
-    <>
+    <div className="min-h-screen bg-navy-900">
       <ThreeBackground />
-      <div className="min-h-screen grid place-items-center bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 p-4">
+      <BackgroundEffects />
+      <div className="min-h-screen grid place-items-center p-4">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="w-full max-w-sm"
         >
-          <motion.div variants={itemVariants} className="text-center mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+          <motion.div variants={itemVariants} className="text-center mb-10 space-y-2">
+            <h1 className="text-4xl font-heading font-bold bg-gradient-to-r from-gold-400 to-yellow-300 bg-clip-text text-transparent tracking-wide">
               TCOPOS
             </h1>
-            <p className="text-slate-400 mt-2 text-sm">
+            <p className="text-slate-500 text-sm font-heading tracking-wide">
               Gestiona tus cuentas y transacciones
             </p>
           </motion.div>
@@ -62,24 +64,24 @@ export default function Login() {
               variants={shakeVariants}
               animate={Object.keys(errors).length > 0 ? 'shake' : undefined}
             >
-              <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-blue-500/10">
+              <Card className="bg-navy-800/60 backdrop-blur-xl border border-navy-600/30 shadow-2xl shadow-navy-900/50">
                 <CardContent className="p-6 sm:p-8 space-y-6">
                   <motion.p
                     variants={itemVariants}
-                    className="text-slate-400 text-xs text-center"
+                    className="text-slate-600 text-xs text-center font-heading tracking-wide"
                   >
-                    Demo: <span className="text-blue-400">test@test.com</span> / cualquier contraseña
+                    Demo: <span className="text-blue-light">test@test.com</span> / cualquier contraseña
                   </motion.p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <motion.div variants={itemVariants}>
+                    <motion.div variants={itemVariants} className="space-y-1">
                       <TextField
                         isInvalid={!!errors.email}
                         className="w-full"
                       >
-                        <Label className="text-slate-300 text-sm">Correo electrónico</Label>
+                        <Label className="text-slate-400 text-sm font-heading tracking-wide">Correo electrónico</Label>
                         <div className="relative mt-1.5">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10">
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 z-10">
                             <AlertCircle />
                           </span>
                           <Input
@@ -93,21 +95,21 @@ export default function Login() {
                             type="email"
                             placeholder="test@test.com"
                             disabled={isSubmitting}
-                            className="pl-10 text-white placeholder:text-slate-500"
+                            className="bg-transparent w-full text-slate-200 placeholder:text-slate-600"
                           />
                         </div>
                         {errors.email && (
-                          <FieldError className="text-red-400 text-xs mt-1">{errors.email.message}</FieldError>
+                          <FieldError className="text-slate-400 text-xs mt-1">{errors.email.message}</FieldError>
                         )}
                       </TextField>
                     </motion.div>
 
-                    <motion.div variants={itemVariants}>
+                    <motion.div variants={itemVariants} className="space-y-1">
                       <TextField
                         isInvalid={!!errors.password}
                         className="w-full"
                       >
-                        <Label className="text-slate-300 text-sm">Contraseña</Label>
+                        <Label className="text-slate-400 text-sm font-heading tracking-wide">Contraseña</Label>
                         <Input
                           {...register('password', {
                             required: 'La contraseña es requerida',
@@ -119,10 +121,10 @@ export default function Login() {
                           type="password"
                           placeholder="••••••••"
                           disabled={isSubmitting}
-                          className="mt-1.5 text-white placeholder:text-slate-500"
+                          className="bg-transparent mt-1.5 text-slate-200 placeholder:text-slate-600"
                         />
                         {errors.password && (
-                          <FieldError className="text-red-400 text-xs mt-1">{errors.password.message}</FieldError>
+                          <FieldError className="text-slate-400 text-xs mt-1">{errors.password.message}</FieldError>
                         )}
                       </TextField>
                     </motion.div>
@@ -131,7 +133,7 @@ export default function Login() {
                       <Button
                         type="submit"
                         variant="primary"
-                        className="w-full font-semibold"
+                        className="w-full font-heading font-semibold bg-gradient-to-r from-blue-accent to-navy-500 text-white hover:from-blue-light hover:to-blue-accent border-none tracking-wide"
                         isPending={isSubmitting}
                         isDisabled={isSubmitting}
                         size="lg"
@@ -145,7 +147,7 @@ export default function Login() {
                     <motion.p
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="text-red-400 text-xs text-center"
+                      className="text-slate-500 text-xs text-center font-heading tracking-wide"
                     >
                       Revisa los campos marcados en rojo
                     </motion.p>
@@ -157,12 +159,12 @@ export default function Login() {
 
           <motion.p
             variants={itemVariants}
-            className="text-center text-slate-500 text-xs mt-6"
+            className="text-center text-slate-600 text-xs mt-8 font-heading tracking-wide"
           >
             &copy; {new Date().getFullYear()} TCOPOS &mdash; App financiera
           </motion.p>
         </motion.div>
       </div>
-    </>
+    </div>
   )
 }

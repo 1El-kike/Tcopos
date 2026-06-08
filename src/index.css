@@ -1,4 +1,38 @@
-@import "tailwindcss";
+@import "@heroui/styles";
+
+@theme {
+  --color-navy-50: #eef2f8;
+  --color-navy-100: #cdd6e8;
+  --color-navy-200: #9aadc8;
+  --color-navy-300: #6b84a6;
+  --color-navy-400: #3d5c85;
+  --color-navy-500: #1e3a8a;
+  --color-navy-600: #162a50;
+  --color-navy-700: #0f1a3e;
+  --color-navy-800: #0a1628;
+  --color-navy-900: #050b14;
+
+  --color-gold-400: #d4af37;
+  --color-gold-600: #a88422;
+  --color-gold-700: #8b6d1a;
+
+  --color-blue-accent: #2563eb;
+  --color-blue-light: #3b82f6;
+
+  --font-heading: "Outfit", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #050b14;
+  color: #e2e8f0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
+}
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
@@ -9,12 +43,12 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: rgba(30, 58, 138, 0.4);
   border-radius: 999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.5);
+  background: rgba(30, 58, 138, 0.6);
 }
 
 @media (prefers-reduced-motion: reduce) {

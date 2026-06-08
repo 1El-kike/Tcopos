@@ -12,7 +12,7 @@ interface TransactionListProps {
 }
 
 function SkeletonBlock({ className = '' }: { className?: string }) {
-  return <div className={`bg-white/5 rounded-xl animate-pulse ${className}`} />
+  return <div className={`bg-navy-700/40 rounded-xl animate-pulse ${className}`} />
 }
 
 function EditIcon() {
@@ -61,9 +61,9 @@ export default function TransactionList({ transactions, isLoading, currency, onE
 
   if (transactions.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-slate-400">No hay transacciones registradas.</p>
-        <p className="text-slate-500 text-sm mt-1">
+      <div className="text-center py-12 space-y-1">
+        <p className="text-slate-500 font-heading tracking-wide">No hay transacciones registradas.</p>
+        <p className="text-slate-600 text-sm tracking-wide">
           Crea la primera usando el formulario de arriba.
         </p>
       </div>
@@ -77,29 +77,29 @@ export default function TransactionList({ transactions, isLoading, currency, onE
           key={tx.id}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center justify-between bg-white/5 hover:bg-white/10 rounded-xl p-3 sm:p-4 transition-colors group"
+          className="flex items-center justify-between bg-navy-700/40 hover:bg-navy-600/40 rounded-xl p-3 sm:p-4 transition-colors group border border-navy-600/20 hover:border-blue-accent/20"
         >
           <div className="min-w-0 flex-1">
-            <p className="text-white font-medium truncate text-sm sm:text-base">{tx.description}</p>
-            <p className="text-slate-400 text-xs capitalize">
+            <p className="text-slate-200 font-heading font-medium truncate text-sm sm:text-base tracking-wide">{tx.description}</p>
+            <p className="text-slate-500 text-xs capitalize tracking-wide">
               {tx.category} &middot; {tx.type}
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 ml-3">
             <div className="text-right">
-              <p className="text-white font-semibold tabular-nums text-sm">
+              <p className="text-slate-100 font-heading font-semibold tabular-nums text-sm tracking-wide">
                 {new Intl.NumberFormat('es-DO', {
                   style: 'currency',
                   currency,
                 }).format(Number(tx.amount))}
               </p>
               <span
-                className={`text-xs font-medium capitalize ${
+                className={`text-xs font-heading font-medium capitalize tracking-wide ${
                   tx.type === 'deposit'
-                    ? 'text-green-400'
+                    ? 'text-blue-light'
                     : tx.type === 'withdrawal'
-                      ? 'text-red-400'
-                      : 'text-slate-400'
+                      ? 'text-slate-500'
+                      : 'text-slate-500'
                 }`}
               >
                 {tx.type === 'deposit'
@@ -114,7 +114,7 @@ export default function TransactionList({ transactions, isLoading, currency, onE
                 <button
                   type="button"
                   onClick={() => onEdit(tx)}
-                  className="p-1.5 rounded-lg hover:bg-blue-500/20 text-slate-500 hover:text-blue-400 transition-colors cursor-pointer"
+                  className="p-1.5 rounded-lg hover:bg-navy-500/30 text-slate-500 hover:text-blue-light transition-colors cursor-pointer"
                   aria-label="Editar transacción"
                 >
                   <EditIcon />
@@ -124,7 +124,7 @@ export default function TransactionList({ transactions, isLoading, currency, onE
                 type="button"
                 onClick={() => handleDelete(tx.id)}
                 disabled={deletingId === tx.id}
-                className="p-1.5 rounded-lg hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-colors cursor-pointer disabled:opacity-40"
+                className="p-1.5 rounded-lg hover:bg-navy-500/30 text-slate-500 hover:text-blue-light transition-colors cursor-pointer disabled:opacity-40"
                 aria-label="Eliminar transacción"
               >
                 <TrashIcon />

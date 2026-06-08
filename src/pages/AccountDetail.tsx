@@ -1,38 +1,22 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
 import { motion } from 'motion/react'
-import { Button, Input, Card, CardContent, TextField, Label, FieldError } from '@heroui/react'
+import { Button, Card, CardContent } from '@heroui/react'
 import toast from 'react-hot-toast'
 import { useAccount } from '../hooks/useAccounts'
 import { useTransactions, useCreateTransaction, useUpdateTransaction } from '../hooks/useTransactions'
+import { ChevronLeftIcon } from '../components/atoms/Icons'
+import SkeletonBlock from '../components/atoms/SkeletonBlock'
+import SectionHeader from '../components/atoms/SectionHeader'
+import TransactionForm, { type TransactionFormValues } from '../components/molecules/TransactionForm'
 import DateRangeFilter from '../components/molecules/DateRangeFilter'
 import TransactionSummary from '../components/organisms/TransactionSummary'
 import TransactionList from '../components/organisms/TransactionList'
 import CategoryChart from '../components/organisms/CategoryChart'
 import type { Transaction } from '../services/types'
 
-const TX_TYPES = [
-  { value: 'deposit', label: 'Depósito' },
-  { value: 'withdrawal', label: 'Retiro' },
-  { value: 'payment', label: 'Pago' },
-  { value: 'invoice', label: 'Factura' },
-] as const
-
-interface TransactionForm {
-  type: string
-  amount: string
-  description: string
-  category: string
-}
-
-function ArrowLeft() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="19" y1="12" x2="5" y2="12" />
-      <polyline points="12 19 5 12 12 5" />
-    </svg>
-  )
+function toTimestamp(dateStr: string): number {
+  return new Date(dateStr).getTime()
 }
 
 const containerVariants = {
@@ -45,12 +29,33 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 }
 
-function SkeletonBlock({ className = '' }: { className?: string }) {
-  return <div className={`bg-white/5 rounded-xl animate-pulse ${className}`} />
+function EditIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  )
 }
 
-function toTimestamp(dateStr: string): number {
-  return new Date(dateStr).getTime()
+function ListIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <line x1="3" y1="9" x2="21" y2="9" />
+      <line x1="9" y1="21" x2="9" y2="9" />
+    </svg>
+  )
+}
+
+function ChartIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 20V10" />
+      <path d="M18 20V4" />
+      <path d="M6 20v-6" />
+    </svg>
+  )
 }
 
 export default function AccountDetail() {
@@ -63,32 +68,12 @@ export default function AccountDetail() {
   const createTx = useCreateTransaction()
   const updateTx = useUpdateTransaction()
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm<TransactionForm>()
-
-  useEffect(() => {
-    if (editingTx) {
-      setValue('type', editingTx.type)
-      setValue('amount', editingTx.amount)
-      setValue('description', editingTx.description)
-      setValue('category', editingTx.category)
-    }
-  }, [editingTx, setValue])
-
   const handleEdit = (tx: Transaction) => {
     setEditingTx(tx)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const cancelEdit = () => {
-    setEditingTx(null)
-    reset()
-  }
+  const cancelEdit = () => setEditingTx(null)
 
   const accountTxs = transactions?.filter((tx) => tx.accountId === id) ?? []
 
@@ -106,7 +91,7 @@ export default function AccountDetail() {
     .filter((tx) => tx.type !== 'deposit')
     .reduce((sum, tx) => sum + Number(tx.amount), 0)
 
-  const onSubmit = async (values: TransactionForm) => {
+  const handleSave = async (values: TransactionFormValues) => {
     try {
       if (editingTx) {
         await updateTx.mutateAsync({
@@ -128,7 +113,6 @@ export default function AccountDetail() {
         })
         toast.success('Transacción creada correctamente')
       }
-      reset()
     } catch {
       toast.error(editingTx ? 'Error al actualizar la transacción' : 'Error al crear la transacción')
     }
@@ -153,13 +137,22 @@ export default function AccountDetail() {
   if (!account) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center space-y-4">
-        <p className="text-slate-400 text-lg">Cuenta no encontrada</p>
-        <Button variant="secondary" onPress={() => navigate('/dashboard')}>
+        <p className="text-slate-500 text-lg font-heading tracking-wide">Cuenta no encontrada</p>
+        <Button variant="secondary" onPress={() => navigate('/dashboard')} className="font-heading tracking-wide">
           Volver al dashboard
         </Button>
       </div>
     )
   }
+
+  const formDefaultValues = editingTx
+    ? {
+        type: editingTx.type,
+        amount: editingTx.amount,
+        description: editingTx.description,
+        category: editingTx.category,
+      }
+    : undefined
 
   return (
     <motion.div
@@ -172,14 +165,14 @@ export default function AccountDetail() {
         <button
           type="button"
           onClick={() => navigate('/dashboard')}
-          className="p-2 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
+          className="p-2 rounded-xl hover:bg-navy-700/50 text-slate-500 hover:text-slate-200 transition-colors cursor-pointer"
           aria-label="Volver al dashboard"
         >
-          <ArrowLeft />
+          <ChevronLeftIcon />
         </button>
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white">{account.name}</h1>
-          <p className="text-slate-400 text-sm">
+        <div className="space-y-0.5">
+          <h1 className="text-xl sm:text-2xl font-heading font-bold text-gold-400 tracking-wide">{account.name}</h1>
+          <p className="text-slate-500 text-sm font-heading tracking-wide">
             {account.currency} &middot; ID: {account.id}
           </p>
         </div>
@@ -195,132 +188,46 @@ export default function AccountDetail() {
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <Card className="bg-white/5 border border-white/10 backdrop-blur-xl">
+        <Card className="bg-navy-700/40 border border-navy-600/30 backdrop-blur-xl">
           <CardContent className="p-5 sm:p-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                {editingTx ? 'Editar transacción' : 'Nueva transacción'}
-              </h2>
+            <SectionHeader
+              icon={<EditIcon />}
+              title={editingTx ? 'Editar transacción' : 'Nueva transacción'}
+            >
               {editingTx && (
                 <button
                   type="button"
                   onClick={cancelEdit}
-                  className="text-xs text-slate-400 hover:text-white border border-white/10 hover:border-white/30 rounded-lg px-3 py-1.5 transition-all cursor-pointer"
+                  className="text-xs text-slate-500 hover:text-slate-200 border border-navy-600/30 hover:border-navy-500/50 rounded-lg px-3 py-1.5 transition-all cursor-pointer font-heading tracking-wide"
                 >
                   Cancelar
                 </button>
               )}
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-sm text-slate-300 font-medium">Tipo</span>
-                  <select
-                    {...register('type', { required: 'Selecciona un tipo' })}
-                    className="h-10 rounded-xl bg-white/10 border border-white/20 text-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
-                  >
-                    <option value="" className="text-slate-900">Selecciona</option>
-                    {TX_TYPES.map((t) => (
-                      <option key={t.value} value={t.value} className="text-slate-900">
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.type && (
-                    <p className="text-red-400 text-xs">{errors.type.message}</p>
-                  )}
-                </label>
+            </SectionHeader>
 
-                <TextField isInvalid={!!errors.amount}>
-                  <Label className="text-slate-300 text-sm">Monto</Label>
-                  <Input
-                    {...register('amount', {
-                      required: 'El monto es requerido',
-                      min: { value: 0.01, message: 'Monto debe ser mayor a 0' },
-                    })}
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    disabled={isSubmitting}
-                    className="mt-1.5 text-white placeholder:text-slate-500"
-                  />
-                  {errors.amount && (
-                    <FieldError className="text-red-400 text-xs mt-1">{errors.amount.message}</FieldError>
-                  )}
-                </TextField>
-              </div>
-
-              <TextField isInvalid={!!errors.description}>
-                <Label className="text-slate-300 text-sm">Descripción</Label>
-                <Input
-                  {...register('description', {
-                    required: 'La descripción es requerida',
-                    minLength: { value: 3, message: 'Mínimo 3 caracteres' },
-                  })}
-                  placeholder="Ej: Pago de servicios"
-                  disabled={isSubmitting}
-                  className="mt-1.5 text-white placeholder:text-slate-500"
-                />
-                {errors.description && (
-                  <FieldError className="text-red-400 text-xs mt-1">{errors.description.message}</FieldError>
-                )}
-              </TextField>
-
-              <TextField isInvalid={!!errors.category}>
-                <Label className="text-slate-300 text-sm">Categoría</Label>
-                <Input
-                  {...register('category', {
-                    required: 'La categoría es requerida',
-                  })}
-                  placeholder="Ej: Alimentos, Transporte, etc."
-                  disabled={isSubmitting}
-                  className="mt-1.5 text-white placeholder:text-slate-500"
-                />
-                {errors.category && (
-                  <FieldError className="text-red-400 text-xs mt-1">{errors.category.message}</FieldError>
-                )}
-              </TextField>
-
-              <Button
-                type="submit"
-                variant="primary"
-                className="w-full font-semibold"
-                isPending={isSubmitting}
-                isDisabled={isSubmitting}
-                size="lg"
-              >
-                {isSubmitting
-                  ? editingTx ? 'Actualizando...' : 'Creando...'
-                  : editingTx ? 'Actualizar transacción' : 'Crear transacción'}
-              </Button>
-            </form>
+            <TransactionForm
+              key={editingTx?.id ?? 'new'}
+              defaultValues={formDefaultValues}
+              onSave={handleSave}
+              onCancel={cancelEdit}
+              saveLabel={editingTx ? 'Actualizar transacción' : 'Crear transacción'}
+              savingLabel={editingTx ? 'Actualizando...' : 'Creando...'}
+            />
           </CardContent>
         </Card>
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <Card className="bg-white/5 border border-white/10 backdrop-blur-xl">
+        <Card className="bg-navy-700/40 border border-navy-600/30 backdrop-blur-xl">
           <CardContent className="p-5 sm:p-6 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <line x1="3" y1="9" x2="21" y2="9" />
-                  <line x1="9" y1="21" x2="9" y2="9" />
-                </svg>
-                Movimientos ({filteredTxs.length})
-              </h2>
+            <SectionHeader icon={<ListIcon />} title={`Movimientos (${filteredTxs.length})`}>
               <DateRangeFilter
                 from={dateRange.from}
                 to={dateRange.to}
                 onChange={setDateRange}
                 onReset={() => setDateRange({ from: '', to: '' })}
               />
-            </div>
+            </SectionHeader>
 
             <TransactionList
               transactions={filteredTxs}
@@ -333,16 +240,9 @@ export default function AccountDetail() {
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <Card className="bg-white/5 border border-white/10 backdrop-blur-xl">
+        <Card className="bg-navy-700/40 border border-navy-600/30 backdrop-blur-xl">
           <CardContent className="p-5 sm:p-6">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 20V10" />
-                <path d="M18 20V4" />
-                <path d="M6 20v-6" />
-              </svg>
-              Ingresos / Egresos por categoría
-            </h2>
+            <SectionHeader icon={<ChartIcon />} title="Ingresos / Egresos por categoría" />
             <CategoryChart transactions={filteredTxs} currency={account.currency} />
           </CardContent>
         </Card>

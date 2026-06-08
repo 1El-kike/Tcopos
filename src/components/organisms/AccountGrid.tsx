@@ -27,15 +27,15 @@ const skeletonItemVariants = {
 
 function SkeletonCard() {
   return (
-    <div className="bg-white/5 rounded-2xl p-5 space-y-4 animate-pulse">
+    <div className="bg-navy-700/40 rounded-2xl p-5 space-y-4 animate-pulse">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-white/10" />
+        <div className="w-10 h-10 rounded-full bg-navy-500/20" />
         <div className="space-y-2 flex-1">
-          <div className="h-4 bg-white/10 rounded w-3/4" />
-          <div className="h-3 bg-white/10 rounded w-1/3" />
+          <div className="h-4 bg-navy-500/20 rounded w-3/4" />
+          <div className="h-3 bg-navy-500/20 rounded w-1/3" />
         </div>
       </div>
-      <div className="h-7 bg-white/10 rounded w-1/2" />
+      <div className="h-7 bg-navy-500/20 rounded w-1/2" />
     </div>
   )
 }
@@ -72,7 +72,7 @@ export default function AccountGrid({ accounts, isLoading }: AccountGridProps) {
         animate={{ opacity: 1, y: 0 }}
         className="text-center py-20"
       >
-        <p className="text-slate-400 text-lg">No hay cuentas disponibles</p>
+        <p className="text-slate-500 text-lg font-heading tracking-wide">No hay cuentas disponibles</p>
       </motion.div>
     )
   }
@@ -94,21 +94,21 @@ export default function AccountGrid({ accounts, isLoading }: AccountGridProps) {
           <button
             type="button"
             onClick={() => navigate(`/account/${account.id}`)}
-            className="w-full text-left bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/50 rounded-2xl p-5 space-y-4 transition-all duration-200 cursor-pointer group"
+            className="w-full text-left bg-navy-700/40 hover:bg-navy-600/40 border border-navy-600/30 hover:border-blue-accent/30 rounded-2xl p-5 space-y-4 transition-all duration-200 cursor-pointer group"
           >
             <div className="flex items-center gap-3">
               <div
-                className="w-10 h-10 rounded-full flex-shrink-0 ring-2 ring-white/10 group-hover:ring-blue-500/30 transition-all"
+                className="w-10 h-10 rounded-full flex-shrink-0 ring-2 ring-navy-500/30 group-hover:ring-blue-accent/30 transition-all"
                 style={{ backgroundColor: account.color }}
               />
               <div className="min-w-0 flex-1">
-                <p className="text-white font-semibold truncate group-hover:text-blue-300 transition-colors">
+                <p className="text-slate-200 font-heading font-semibold truncate group-hover:text-blue-light transition-colors tracking-wide">
                   {account.name}
                 </p>
-                <p className="text-slate-400 text-sm">{account.currency}</p>
+                <p className="text-slate-500 text-sm">{account.currency}</p>
               </div>
             </div>
-            <p className="text-2xl font-bold text-white tabular-nums tracking-tight">
+            <p className="text-2xl font-heading font-bold text-slate-100 tabular-nums tracking-wide">
               {new Intl.NumberFormat('es-DO', {
                 style: 'currency',
                 currency: account.currency,
